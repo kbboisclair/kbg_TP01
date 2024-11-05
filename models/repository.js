@@ -26,14 +26,14 @@ export default class Repository {
             this.ETag = repositoryEtags[this.objectsName];
         else this.newETag();
     }
-    newETag() {
-        this.ETag = uuidv1();
-        repositoryEtags[this.objectsName] = this.ETag;
-    }
     static getETag(modelName) {
         if (modelName in repositoryEtags)
             return repositoryEtags[modelName];
         else null;
+    }
+    newETag() {
+        this.ETag = uuidv1();
+        repositoryEtags[this.objectsName] = this.ETag;
     }
     objects() {
         if (this.objectsList == null) this.read();
@@ -71,15 +71,23 @@ export default class Repository {
             RepositoryCachesManager.add(this.objectsName, this.objectsList);
         }
     }
-    nextId() {
-        let maxId = 0;
-        for (let object of this.objects()) {
-            if (object.Id > maxId) {
-                maxId = object.Id;
+
+    createId() {
+        if (this.model.securedId) {
+            let newId = '';
+            do { newId = uuidv1(); } while (this.indexOf(newId) > -1);
+            return newId;
+        } else {
+            let maxId = 0;
+            for (let object of this.objects()) {
+                if (object.Id > maxId) {
+                    maxId = object.Id;
+                }
             }
+            return maxId + 1;
         }
-        return maxId + 1;
     }
+
     checkConflict(instance) {
         let conflict = false;
         if (this.model.key)
@@ -92,12 +100,15 @@ export default class Repository {
     }
     add(object) {
         delete object.Id;
-        object = { "Id": 0, ...object };
+        if (this.model.securedId)
+            object = { "Id": '', ...object };
+        else
+            object = { "Id": 0, ...object };
         this.model.validate(object);
         if (this.model.state.isValid) {
             this.checkConflict(object);
             if (!this.model.state.inConflict) {
-                object.Id = this.nextId();
+                object.Id = this.createId();
                 this.model.handleAssets(object);
                 this.objectsList.push(object);
                 this.write();
@@ -107,6 +118,8 @@ export default class Repository {
     }
     update(id, objectToModify) {
         delete objectToModify.Id;
+        if (!this.model.securedId)
+            id = parseInt(id);
         objectToModify = { Id: id, ...objectToModify };
         this.model.validate(objectToModify);
         if (this.model.state.isValid) {
@@ -127,6 +140,8 @@ export default class Repository {
     }
     remove(id) {
         let index = 0;
+        if (!this.model.securedId)
+            id = parseInt(id);
         for (let object of this.objects()) {
             if (object.Id === id) {
                 this.model.removeAssets(object)
@@ -153,12 +168,14 @@ export default class Repository {
             return collectionFilter.get();
         else {
             this.errorMessages = collectionFilter.errorMessages;
-            return null; 
+            return null;
         }
     }
     get(id, dontBind = false) {
+        if (!this.model.securedId)
+            id = parseInt(id);
         for (let object of this.objects()) {
-            if (object.Id == id) {
+            if (object.Id === id) {
                 if (dontBind)
                     return object;
                 else
@@ -188,12 +205,14 @@ export default class Repository {
         return null;
     }
     findByField(fieldName, value, excludedId = 0) {
+        if (!this.model.securedId && excludedId != 0)
+            excludedId = parseInt(excludedId);
         if (fieldName) {
             let index = 0;
             for (let object of this.objects()) {
                 try {
                     if (object[fieldName] === value) {
-                        if (object.Id != excludedId) return this.objectsList[index];
+                        if (object.Id !== excludedId) return this.objectsList[index];
                     }
                     index++;
                 } catch (error) { break; }
@@ -202,6 +221,8 @@ export default class Repository {
         return null;
     }
     indexOf(id) {
+        if (!this.model.securedId)
+            id = parseInt(id);
         let index = 0;
         for (let object of this.objects()) {
             if (object.Id === id) return index;

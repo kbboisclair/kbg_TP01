@@ -1,7 +1,7 @@
 
 import * as serverVariables from "./serverVariables.js";
-import { createServer } from 'http';
 import * as os from "os";
+import { createServer } from 'http';
 import process from 'process';
 import dateAndTime from 'date-and-time';
 import HttpContext from './httpContext.js';
@@ -9,11 +9,13 @@ import MiddlewaresPipeline from './middlewaresPipeline.js';
 import * as router from './router.js';
 import { handleCORSPreflight } from './cors.js';
 import { handleStaticResourceRequest } from './staticResourcesServer.js';
+import CachedRequests from "./cachedRequestsManager.js";
 
 let api_server_version = serverVariables.get("main.api_server_version");
+let hideHeadRequest = serverVariables.get("main.hideHeadRequest");
 
 export default class APIServer {
-    constructor(port = process.env.PORT || 500) {
+    constructor(port = process.env.PORT || 5000) {
         this.port = port;
         this.initMiddlewaresPipeline();
         this.httpContext = null;
@@ -27,16 +29,23 @@ export default class APIServer {
         this.middlewaresPipeline.add(handleStaticResourceRequest);
 
         // API middlewares
+        this.middlewaresPipeline.add(CachedRequests.get);
+        this.middlewaresPipeline.add(router.Registered_EndPoint);
         this.middlewaresPipeline.add(router.API_EndPoint);
+    }
+    hiddenRequest() {
+        return (hideHeadRequest && this.httpContext.req.method === 'HEAD');
     }
     async handleHttpRequest(req, res) {
         this.markRequestProcessStartTime();
         this.httpContext = await HttpContext.create(req, res);
-        this.showRequestInfo();
+        if (!this.hiddenRequest())
+            this.showRequestInfo();
         if (!(await this.middlewaresPipeline.handleHttpRequest(this.httpContext)))
             this.httpContext.response.notFound('this end point does not exist...');
-        this.showRequestProcessTime();
-        this.showMemoryUsage();
+        if (!this.hiddenRequest())
+            this.showRequestProcessTime();
+        //this.showMemoryUsage();
     }
     start() {
         this.httpServer.listen(this.port, () => { this.startupMessage() });
@@ -50,7 +59,7 @@ export default class APIServer {
         console.log(FgGreen, "* Release date: october 2024        *");
         console.log(FgGreen, "*************************************");
         console.log(FgWhite + BgGreen, `HTTP Server running on ${os.hostname()} and listening port ${this.port}...`);
-        this.showMemoryUsage();
+        //this.showMemoryUsage();
     }
     showRequestInfo() {
         let time = dateAndTime.format(new Date(), 'HH:mm:ss');

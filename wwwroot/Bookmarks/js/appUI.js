@@ -2,11 +2,11 @@ const periodicRefreshPeriod = 10;
 let contentScrollPosition = 0;
 let selectedCategory = "";
 let currentETag = "";
+let hold_Periodic_Refresh = false;
 
 Init_UI();
 
 async function Init_UI() {
-    currentETag = await Bookmarks_API.HEAD();
     renderBookmarks();
     $('#createBookmark').on("click", async function () {
         saveContentScrollPosition();
@@ -23,13 +23,15 @@ async function Init_UI() {
 
 function start_Periodic_Refresh() {
     setInterval(async () => {
-       let etag = await Bookmarks_API.HEAD(); 
-       if (currentETag != etag)  {
-            currentETag = etag;
-            renderBookmarks();
-       }
-    }, 
-    periodicRefreshPeriod * 1000);
+        if (! hold_Periodic_Refresh) {
+            let etag = await Bookmarks_API.HEAD();
+            if (currentETag != etag) {
+                currentETag = etag;
+                renderBookmarks();
+            }
+        }
+    },
+        periodicRefreshPeriod * 1000);
 }
 
 function renderAbout() {
@@ -103,14 +105,18 @@ function compileCategories(bookmarks) {
     }
 }
 async function renderBookmarks() {
+    hold_Periodic_Refresh = false;
     showWaitingGif();
     $("#actionTitle").text("Liste des favoris");
     $("#createBookmark").show();
     $("#abort").hide();
-    let Bookmarks = await Bookmarks_API.Get();
-    compileCategories(Bookmarks)
-    eraseContent();
-    if (Bookmarks !== null) {
+    let response = await Bookmarks_API.Get();
+    if (!Bookmarks_API.error) {
+        currentETag = response.ETag;
+        let Bookmarks = response.data;
+     
+        eraseContent();
+        compileCategories(Bookmarks)
         Bookmarks.forEach(Bookmark => {
             if ((selectedCategory === "") || (selectedCategory === Bookmark.Category))
                 $("#content").append(renderBookmark(Bookmark));
@@ -119,15 +125,15 @@ async function renderBookmarks() {
         // Attached click events on command icons
         $(".editCmd").on("click", function () {
             saveContentScrollPosition();
-            renderEditBookmarkForm(parseInt($(this).attr("editBookmarkId")));
+            renderEditBookmarkForm($(this).attr("editBookmarkId"));
         });
         $(".deleteCmd").on("click", function () {
             saveContentScrollPosition();
-            renderDeleteBookmarkForm(parseInt($(this).attr("deleteBookmarkId")));
+            renderDeleteBookmarkForm($(this).attr("deleteBookmarkId"));
         });
         // $(".BookmarkRow").on("click", function (e) { e.preventDefault(); })
     } else {
-        renderError("Service introuvable");
+        renderError(Bookmarks_API.currentHttpError);
     }
 }
 function showWaitingGif() {
@@ -158,7 +164,8 @@ function renderCreateBookmarkForm() {
 }
 async function renderEditBookmarkForm(id) {
     showWaitingGif();
-    let Bookmark = await Bookmarks_API.Get(id);
+    let response = await Bookmarks_API.Get(id)
+    let Bookmark = response.data;
     if (Bookmark !== null)
         renderBookmarkForm(Bookmark);
     else
@@ -169,7 +176,8 @@ async function renderDeleteBookmarkForm(id) {
     $("#createBookmark").hide();
     $("#abort").show();
     $("#actionTitle").text("Retrait");
-    let Bookmark = await Bookmarks_API.Get(id);
+    let response = await Bookmarks_API.Get(id)
+    let Bookmark = response.data;
     let favicon = makeFavicon(Bookmark.Url);
     eraseContent();
     if (Bookmark !== null) {
@@ -232,6 +240,7 @@ function renderBookmarkForm(Bookmark = null) {
     $("#createBookmark").hide();
     $("#abort").show();
     eraseContent();
+    hold_Periodic_Refresh = true;
     let create = Bookmark == null;
     let favicon = `<div class="big-favicon"></div>`;
     if (create)
@@ -291,7 +300,7 @@ function renderBookmarkForm(Bookmark = null) {
     $('#BookmarkForm').on("submit", async function (event) {
         event.preventDefault();
         let Bookmark = getFormData($("#BookmarkForm"));
-        Bookmark.Id = parseInt(Bookmark.Id);
+        // Bookmark.Id = parseInt(Bookmark.Id);
         showWaitingGif();
         let result = await Bookmarks_API.Save(Bookmark, create);
         if (result)

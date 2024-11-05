@@ -4,13 +4,18 @@
 // Author : Nicolas Chourot
 // Lionel-Groulx College
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-import { log } from "./log.js";
+import * as serverVariables from "./serverVariables.js";
+import CachedRequests from "./cachedRequestsManager.js";
+let hideHeadRequest = serverVariables.get("main.hideHeadRequest");
 
 export default class Response {
     constructor(HttpContext) {
         this.HttpContext = HttpContext;
         this.res = HttpContext.res;
         this.errorContent = "";
+    }
+    hiddenRequest() {
+        return (hideHeadRequest && this.HttpContext.req.method === 'HEAD');
     }
     status(number, errorMessage = '') {
         if (errorMessage) {
@@ -23,12 +28,14 @@ export default class Response {
         }
     }
     end(content = null) {
-        if (content) {
+        if (content) 
             this.res.end(content);
-        }
         else
             this.res.end();
+
+        if (!this.hiddenRequest())
             console.log(FgCyan + Bright, "Response status:", this.res.statusCode, this.errorContent);
+        
         return true;
     }
 
@@ -36,18 +43,26 @@ export default class Response {
 
     ok() { return this.status(200); }       // ok status
     ETag(ETag) {
-        console.log(FgCyan + Bright, "Response header ETag key:", ETag);
+        if (!this.hiddenRequest())
+            console.log(FgCyan + Bright, "Response header ETag key:", ETag);
         this.res.writeHead(204, { 'ETag': ETag });
         this.end();
     }
-    JSON(obj, ETag = "") {                         // ok status with content
-        if (ETag != "")
+    addInRequestsCache(jsonObj, ETag) {
+        if (this.HttpContext.isCacheable)
+            CachedRequests.add(this.HttpContext.req.url, jsonObj, ETag);
+    }
+    JSON(obj, ETag = "", fromCache = false) {   // ok status with content
+        if (ETag !== "")
             this.res.writeHead(200, { 'content-type': 'application/json', 'ETag': ETag });
         else
             this.res.writeHead(200, { 'content-type': 'application/json' });
         if (obj != null) {
+            if (!fromCache)
+                this.addInRequestsCache(obj, ETag)
             let content = JSON.stringify(obj);
-            console.log(FgCyan+Bright, "Response payload -->", content.toString().substring(0, 75) + "...");
+            if (!this.hiddenRequest())
+                console.log(FgCyan + Bright, "Response payload -->", content.toString().substring(0, 75) + "...");
             return this.end(content);
         } else
             return this.end();
@@ -56,11 +71,14 @@ export default class Response {
         this.res.writeHead(200, { 'content-type': 'text/html' });
         return this.end(content);
     }
-    accepted() { return this.status(202); } // accepted status
+    accepted(obj = null) { 
+        this.res.writeHead(202, { 'content-type': 'application/json' });
+        return (obj != null? this.end(JSON.stringify(obj)) : this.end());
+    } // accepted status
     deleted() { return this.status(202); }  // accepted status
-    created(jsonObj) {                      // created status
+    created(obj) {                      // created status
         this.res.writeHead(201, { 'content-type': 'application/json' });
-        return this.end(JSON.stringify(jsonObj));
+        return this.end(JSON.stringify(obj));
     }
     content(contentType, content) {         // let the browers cache locally the receiverd content
         this.res.writeHead(200, { 'content-type': contentType, "Cache-Control": "public, max-age=31536000" });

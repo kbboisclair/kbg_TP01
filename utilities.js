@@ -78,12 +78,14 @@ export const decomposePath = (url) => {
     let model = undefined;
     let controllerName = undefined;
     let action = undefined;
-    let id = undefined;
+    let id = '';
     let params = null;
 
     let queryString = getQueryString(url);
     if (queryString != undefined)
         params = queryStringParser.parse(queryString);
+    else
+        queryString = '';
     let path = removeQueryString(url).toLowerCase();
 
     if (path.indexOf('/api') > -1) {
@@ -105,11 +107,11 @@ export const decomposePath = (url) => {
             action = 'index';
 
         if (urlParts[3] != undefined) {
-            id = parseInt(urlParts[3]);
+            id = urlParts[3]; //parseInt(urlParts[3]); //not compatible with secured Id
         }
     } else {
         if (urlParts[2] != undefined) {
-            id = parseInt(urlParts[2]);
+            id = urlParts[2]; //parseInt(urlParts[2]); //not compatible with secured Id
         }
     }
     return { isAPI, model, controllerName, action, id, queryString, params };

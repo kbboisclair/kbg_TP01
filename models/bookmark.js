@@ -2,7 +2,7 @@ import Model from './model.js';
 
 export default class Bookmark extends Model {
     constructor() {
-        super();
+        super(false /* secured Id */);
 
         this.addField('Title', 'string');
         this.addField('Url', 'url');

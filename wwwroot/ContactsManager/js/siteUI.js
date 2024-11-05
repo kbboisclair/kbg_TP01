@@ -55,11 +55,11 @@ async function renderContacts() {
         // Attached click events on command icons
         $(".editCmd").on("click", function () {
             saveContentScrollPosition();
-            renderEditContactForm(parseInt($(this).attr("editContactId")));
+            renderEditContactForm($(this).attr("editContactId"));
         });
         $(".deleteCmd").on("click", function () {
             saveContentScrollPosition();
-            renderDeleteContactForm(parseInt($(this).attr("deleteContactId")));
+            renderDeleteContactForm($(this).attr("deleteContactId"));
         });
         $(".contactRow").on("click", function (e) { e.preventDefault(); })
     } else {
@@ -214,7 +214,6 @@ function renderContactForm(contact = null) {
     $('#contactForm').on("submit", async function (event) {
         event.preventDefault();
         let contact = getFormData($("#contactForm"));
-        contact.Id = parseInt(contact.Id);
         showWaitingGif();
         let result = await API_SaveContact(contact, create);
         if (result)

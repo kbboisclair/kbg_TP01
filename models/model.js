@@ -7,10 +7,14 @@
 import * as utilities from '../utilities.js';
 import * as AssetsRepository from '../assetsManager.js';
 export default class Model {
-    constructor() {
+    constructor(securedId = false) {
         this.fields = [];
-        this.addField('Id', 'integer');
+        if (securedId)
+            this.addField('Id', 'string');
+        else
+            this.addField('Id', 'integer');
         this.key = null;
+        this.securedId = securedId;
         this.state = { isValid: true, inConflict: false, notFound: false, errors: [] };
     }
     addField(propertyName, propertyType) {

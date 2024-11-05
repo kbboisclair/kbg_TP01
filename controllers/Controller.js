@@ -11,15 +11,15 @@ export default class Controller {
     }
     get(id) {
         if (this.repository != null) {
-            if (id !== undefined) {
-                if (!isNaN(id)) {
-                    let data = this.repository.get(id);
-                    if (data != null)
-                        this.HttpContext.response.JSON(data);
-                    else
-                        this.HttpContext.response.notFound("Ressource not found.");
-                } else
-                    this.HttpContext.response.badRequest("The Id in the request url is rather not specified or syntactically wrong.");
+            if (id !== '') {
+                // if (!isNaN(id)) {
+                let data = this.repository.get(id);
+                if (data != null)
+                    this.HttpContext.response.JSON(data);
+                else
+                    this.HttpContext.response.notFound("Ressource not found.");
+                // } else
+                //     this.HttpContext.response.badRequest("The Id in the request url is rather not specified or syntactically wrong.");
             }
             else {
                 let data = this.repository.getAll(this.HttpContext.path.params);
@@ -44,10 +44,11 @@ export default class Controller {
         }
     }
     put(data) {
-        if (!isNaN(this.HttpContext.path.id)) {
-            this.repository.update(this.HttpContext.path.id, data);
+        //if (!isNaN(this.HttpContext.path.id)) {
+        if (this.HttpContext.path.id !== '') {
+            data = this.repository.update(this.HttpContext.path.id, data);
             if (this.repository.model.state.isValid) {
-                this.HttpContext.response.ok();
+                this.HttpContext.response.accepted(data);
             } else {
                 if (this.repository.model.state.notFound) {
                     this.HttpContext.response.notFound(this.repository.model.state.errors);
@@ -62,12 +63,14 @@ export default class Controller {
             this.HttpContext.response.badRequest("The Id of ressource is not specified in the request url.")
     }
     remove(id) {
-        if (!isNaN(this.HttpContext.path.id)) {
-            if (this.repository.remove(id))
-                this.HttpContext.response.accepted();
-            else
-                this.HttpContext.response.notFound("Ressource not found.");
+        // if (!isNaN(this.HttpContext.path.id)) {
+            if (this.HttpContext.path.id !== '') {
+        if (this.repository.remove(id))
+            this.HttpContext.response.accepted();
+        else
+            this.HttpContext.response.notFound("Ressource not found.");
         } else
-            this.HttpContext.response.badRequest("The Id in the request url is rather not specified or syntactically wrong.");
+        //   this.HttpContext.response.badRequest("The Id in the request url is rather not specified or syntactically wrong.");
+        this.HttpContext.response.badRequest("The Id in the request url is  not specified.");
     }
 }

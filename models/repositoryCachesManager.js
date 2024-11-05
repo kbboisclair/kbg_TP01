@@ -20,25 +20,17 @@ export default class RepositoryCachesManager {
                 data,
                 Expire_Time: utilities.nowInSeconds() + repositoryCachesExpirationTime
             });
-            console.log(BgWhite + FgBlue, `[Data of ${model} repository has been cached]`);
+            console.log(BgWhite + FgBlue, `[${model} data has been cached]`);
         }
     }
     static startCachedRepositoriesCleaner() {
         // periodic cleaning of expired cached repository data
         setInterval(RepositoryCachesManager.flushExpired, repositoryCachesExpirationTime * 1000);
-        console.log(BgWhite + FgBlue, "[Periodic repositories data caches cleaning process started...]");
+        console.log(BgWhite + FgBlue, "[Periodic cached repositories data cleaning process started...]");
 
     }
     static clear(model) {
-        if (model != "") {
-            let indexToDelete = [];
-            let index = 0;
-            for (let cache of repositoryCaches) {
-                if (cache.model == model) indexToDelete.push(index);
-                index++;
-            }
-            utilities.deleteByIndex(repositoryCaches, indexToDelete);
-        }
+        repositoryCaches = repositoryCaches.filter(cache => cache.model != model);
     }
     static find(model) {
         try {
@@ -61,9 +53,9 @@ export default class RepositoryCachesManager {
         let now = utilities.nowInSeconds();
         for (let cache of repositoryCaches) {
             if (cache.Expire_Time <= now) {
-                console.log(BgWhite + FgBlue, "Cached file data of " + cache.model + ".json expired");
+                console.log(BgWhite + FgBlue, `[${cache.model} data expired]`);
             }
         }
-        repositoryCaches = repositoryCaches.filter( cache => cache.Expire_Time > now);
+        repositoryCaches = repositoryCaches.filter(cache => cache.Expire_Time > now);
     }
 }

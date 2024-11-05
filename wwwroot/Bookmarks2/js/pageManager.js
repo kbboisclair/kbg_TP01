@@ -1,5 +1,6 @@
 class PageManager {
     // getItemsCallBack must return true when there is no more data to collect
+    //test pour Patrick
     constructor(scrollPanelId, itemsPanelId, itemLayout, getItemsCallBack) {
         this.scrollPanel = $(`#${scrollPanelId}`);
         this.itemsPanel = $(`#${itemsPanelId}`);

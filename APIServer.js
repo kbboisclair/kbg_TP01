@@ -15,7 +15,7 @@ let api_server_version = serverVariables.get("main.api_server_version");
 let hideHeadRequest = serverVariables.get("main.hideHeadRequest");
 
 export default class APIServer {
-    constructor(port = process.env.PORT || 5000) {
+    constructor(port = process.env.PORT || 500) {
         this.port = port;
         this.initMiddlewaresPipeline();
         this.httpContext = null;

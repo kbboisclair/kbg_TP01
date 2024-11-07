@@ -139,15 +139,15 @@ async function renderPosts(queryString) {
         let Posts = response.data;
         if (Posts.length > 0) {
             Posts.forEach(Post => {
-                $("#itemsPanel").append(renderBookmark(Post));
+                $("#itemsPanel").append(renderPost(Post));
             });
             $(".editCmd").off();
             $(".editCmd").on("click", function () {
-                renderEditBookmarkForm($(this).attr("editBookmarkId"));
+                renderEditPostForm($(this).attr("editPostId"));
             });
             $(".deleteCmd").off();
             $(".deleteCmd").on("click", function () {
-                renderDeleteBookmarkForm($(this).attr("deleteBookmarkId"));
+                renderDeletePostForm($(this).attr("deletePostId"));
             });
         } else
             endOfData = true;
@@ -195,7 +195,7 @@ async function renderDeletePostForm(id) {
         <div class="PostdeleteForm">
             <h4>Effacer le favori suivant?</h4>
             <br>
-            <div class="PostRow" id=${Bookmark.Id}">
+            <div class="PostRow" id=${Post.Id}">
                 <div class="PostContainer noselect">
                     <div class="PostLayout">
                         <div class="Post">
@@ -266,46 +266,46 @@ function renderPostForm(Post = null) {
     $("#actionTitle").text(create ? "Création" : "Modification");
     $("#PostForm").show();
     $("#PostForm").empty();
-    // $("#PostForm").append(`
-    //     <form class="form" id="PostForm">
-    //         <a href="${Post.Url}" target="_blank" id="faviconLink" class="big-favicon" > ${favicon} </a>
-    //         <br>
-    //         <input type="hidden" name="Id" value="${Post.Id}"/>
+    $("#PostForm").append(`
+        <form class="form" id="PostForm">
+            <a href="${Post.Url}" target="_blank" id="faviconLink" class="big-favicon" > ${favicon} </a>
+            <br>
+            <input type="hidden" name="Id" value="${Post.Id}"/>
 
-    //         <label for="Title" class="form-label">Titre </label>
-    //         <input 
-    //             class="form-control Alpha"
-    //             name="Title" 
-    //             id="Title" 
-    //             placeholder="Titre"
-    //             required
-    //             RequireMessage="Veuillez entrer un titre"
-    //             InvalidMessage="Le titre comporte un caractère illégal"
-    //             value="${Post.Title}"
-    //         />
-    //         <label for="Url" class="form-label">Url </label>
-    //         <input
-    //             class="form-control URL"
-    //             name="Url"
-    //             id="Url"
-    //             placeholder="Url"
-    //             required
-    //             value="${Post.Url}" 
-    //         />
-    //         <label for="Category" class="form-label">Catégorie </label>
-    //         <input 
-    //             class="form-control"
-    //             name="Category"
-    //             id="Category"
-    //             placeholder="Catégorie"
-    //             required
-    //             value="${Post.Category}"
-    //         />
-    //         <br>
-    //         <input type="submit" value="Enregistrer" id="saveBookmark" class="btn btn-primary">
-    //         <input type="button" value="Annuler" id="cancel" class="btn btn-secondary">
-    //     </form>
-    // `);
+            <label for="Title" class="form-label">Titre </label>
+            <input 
+                class="form-control Alpha"
+                name="Title" 
+                id="Title" 
+                placeholder="Titre"
+                required
+                RequireMessage="Veuillez entrer un titre"
+                InvalidMessage="Le titre comporte un caractère illégal"
+                value="${Post.Title}"
+            />
+            <label for="Url" class="form-label">Url </label>
+            <input
+                class="form-control URL"
+                name="Url"
+                id="Url"
+                placeholder="Url"
+                required
+                value="${Post.Url}" 
+            />
+            <label for="Category" class="form-label">Catégorie </label>
+            <input 
+                class="form-control"
+                name="Category"
+                id="Category"
+                placeholder="Catégorie"
+                required
+                value="${Post.Category}"
+            />
+            <br>
+            <input type="submit" value="Enregistrer" id="saveBookmark" class="btn btn-primary">
+            <input type="button" value="Annuler" id="cancel" class="btn btn-secondary">
+        </form>
+    `);
     initFormValidation();
     $("#Url").on("change", function () {
         let favicon = makeFavicon($("#Url").val(), true);

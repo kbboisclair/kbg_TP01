@@ -41,13 +41,13 @@ async function Init_UI() {
     start_Periodic_Refresh();
 }
 
-function showPosts() {  // a revoir
+function showPosts() {  
     $("#actionTitle").text("Liste des favoris");
     $("#scrollPanel").show();
     $('#abort').hide();
-    $('#bookmarkForm').hide();
+    $('#postForm').hide();
     $('#aboutContainer').hide();
-    $("#createBookmark").show();
+    $("#createPost").show();
     hold_Periodic_Refresh = false;
 }
 function hidePosts() {

@@ -1,47 +1,65 @@
-
 .PostRow {
-    padding: 8px;
+    padding: 16px;
     padding-bottom: 0px;
-   scroll-snap-align: start;
+    scroll-snap-align: start;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 16px;
+    max-width: 800px; 
+    margin: 0 auto; 
 }
 
 .PostContainer {
-    display: grid;
-    grid-template-columns: 4fr 1fr;
-    align-items: top;
-    background-color: #eee;
-    border-radius: 6px;
-}
-
-.PostContainer .cmdIcon {
-    display: none;
-}
-
-.PostContainer:hover .cmdIcon {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
 }
 
 .PostLayout {
-    display: grid;
-    grid-template-columns: 1fr;
-    padding: 10px;
-    gap: 8px;
-    align-items: center;
-}
-
-.Post {
-    display: grid;
-    grid-template-columns: 30px auto;
-}
-
-.PostTitle {
-    font-size: 1.1rem;
-    font-weight: bold;
-    color: black;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: start;
 }
 
 .PostCategory {
-    color: dodgerblue !important;
+    color: #007BFF;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.PostImageContainer {
+    position: relative;
+    width: 100%; 
+    max-width: 100%; 
+    padding-top: 56.25%; /* Ratio 16:9 pour la hauteur */
+    margin-bottom: 8px;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.PostImage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    border-radius: 4px;
+}
+
+.PostDetails {
+    font-size: 0.9rem;
+    color: #777;
+    margin-top: 4px;
+}
+
+.PostText {
+    font-size: 1rem;
+    color: #555;
 }
 
 .PostCommandPanel {
@@ -49,8 +67,24 @@
     flex-direction: row;
     justify-content: flex-end;
     gap: 8px;
+    padding: 8px;
+}
+
+.PostContainer .cmdIcon {
+    display: none;
+    cursor: pointer;
+}
+
+.PostContainer:hover .cmdIcon {
+    display: block;
 }
 
 .PostdeleteForm {
     margin: 20px;
+}
+
+.noselect {
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }

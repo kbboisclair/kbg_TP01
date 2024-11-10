@@ -1,10 +1,19 @@
 [
     {
-        "Id": "5b156ce0-46c0-114e",
-        "Title": "Le titre",
-        "Text": "Blabla",
-        "Category": "Test",
-        "Image": "f5795080-4468-11ee-8281-2f600646bb7f.jpeg",
+        "Id": "5b156ca0-46c0-114a",
+        "Title": "Les gauchers n’ont pas d’âme, confirment les scientifiques",
+        "Text": "« Pendant de nombreuses années, les gauchers ont été persécutés par les religieux du pays et, après l’analyse de plus de 150 gauchers canadiens âgés de 16 à 85 ans, je peux vous affirmer que nos ancêtres avaient raison de le faire », nous a confié le Dr Jonathan Stickland. « Les résultats de ces tests sont sans équivoque ! Les gauchers n’ont pas d’âme », a-t-il ajouté. \n\nDéclarant qu’il était « possible » que les gauchers possèdent tout de même une certaine intelligence et puissent éprouver des émotions, le scientifique compare ce type de comportement à celui de certains animaux domestiques. « Comme pour les gauchers, personne ne peut nier que les chats ou les chiens puissent agir comme s’ils avaient la capacité de réfléchir. Dans certains cas, nous avons même été témoins de gauchers reproduisant des comportements tout à fait humains. Néanmoins, nous pensons que cela résulte plutôt de l’instinct, et non d’une réelle preuve d’intelligence », a conclu le scientifique. \n\nRéagissant à la présentation des chercheurs, Greg Rickford, ministre fédéral des Sciences et Technologies, a avoué qu’il se doutait depuis longtemps des conclusions de l’étude. « Personnellement, j’ai toujours considéré que les gauchers sont des créatures maléfiques, viles et fourbes. Ne dit-on pas que la main gauche, c’est la main du diable ? Je pense que nous en avons maintenant la preuve », a-t-il déclaré, ajoutant qu’il comptait informer le ministre de la Justice « rapidement » afin de décriminaliser le meurtre des gauchers. \n\nAu moment de la publication de la nouvelle, le gouvernement conservateur annonçait une subvention de 200 millions de dollars à la Christian University afin de financer des recherches pour découvrir de quel démon sont issues les personnes rousses.",
+        "Category": "Science",
+        "Image": "f5767500-4468-11ee-8281-2b600346bb7f.png",
+        "Creation": 2024
+    },
+    {
+        "Id": "5b156ca0-46c0-104a",
+        "Title": "Inondations : afin d’apaiser la colère des Dieux, des animateurs de MétéoMédia seront sacrifiés",
+        "Text": "« Nous aurions préféré régler cela avec notre bonne vieille technique consistant à ne rien faire et à attendre que les gens oublient le problème, mais devant l’étendue de la couverture médiatique, nous n’avons pas d’autre choix que d’agir », a expliqué Philippe Couillard au cours d’une entrevue exclusive accordée à La Pravda.\n\nÉvoquant des circonstances « exceptionnelles », le premier ministre a dit espérer que cette modeste offrande permette de revenir dans les bonnes grâces de Tlaloc, le Dieu de la pluie.\n\n« Cela peut sembler un peu barbare pour certains, mais comme vous le savez déjà, je n’ai aucun problème, moi, avec le fanatisme religieux et les croyances moyenâgeuses », a-t-il poursuivi, ajoutant dans la foulée que l’appartenance politique des sacrifiés avait été vérifiée afin de ne pas perdre « inutilement » de bons libéraux.\n\nDe son côté, David Heurtel, le ministre de l’Environnement, affirme que les sacrifices humains sont LA meilleure solution pour conjurer le mauvais sort qui s’acharne sur le Québec.\n\n« Le simple fait de réaliser que j’occupe actuellement un poste de ministre devrait suffire à vous convaincre que la situation est désespérée. Ajoutez à cela des conditions météorologiques défavorables, et nous avons là toutes les raisons du monde de recourir à des mesures extrêmes », a conclu le ministre.\n\nLes trois animateurs de MétéoMédia seront exécutés demain par strangulation, dès les premières lueurs de l’aube, au cours d’une cérémonie présidée par le ministre de la Sécurité publique, qui a longuement insisté pour s’acquitter lui-même de cette tâche, ont confirmé plusieurs témoignages.",
+        "Category": "Météo",
+        "Image": "a634d891-46c0-11ee-9c7d-4dfffb69e19c.jpg",
         "Creation": 2024
     }
 ]
+

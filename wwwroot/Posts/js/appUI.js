@@ -42,7 +42,7 @@ async function Init_UI() {
 }
 
 function showPosts() {  
-    $("#actionTitle").text("Liste des favoris");
+    $("#actionTitle").text("Liste des publications");
     $("#scrollPanel").show();
     $('#abort').hide();
     $('#postForm').hide();
@@ -116,7 +116,7 @@ function updateDropDownMenu() {
 }
 async function compileCategories() {
     categories = [];
-    let response = await Posts_API.GetQuery("?fields=category&sort=category");
+    let response = await Posts_API.GetQuery("?fields=category&sort=category");  
     if (!Posts_API.error) {
         let items = response.data;
         if (items != null) {
@@ -134,6 +134,7 @@ async function renderPosts(queryString) {
     if (selectedCategory != "") queryString += "&category=" + selectedCategory;
     addWaitingGif();
     let response = await Posts_API.Get(queryString);
+    console.log("Response from API:", response);
     if (!Posts_API.error) {
         currentETag = response.ETag;
         let Posts = response.data;
@@ -330,24 +331,12 @@ function renderPostForm(Post = null) {
         showPosts();
     });
 }
-function makeFavicon(url, big = false) {
-    // Utiliser l'API de google pour extraire le favicon du site pointé par url
-    // retourne un élément div comportant le favicon en tant qu'image de fond
-    ///////////////////////////////////////////////////////////////////////////
-    if (url.slice(-1) != "/") url += "/";
-    let faviconClass = "favicon";
-    if (big) faviconClass = "big-favicon";
-    url = "http://www.google.com/s2/favicons?sz=64&domain=" + url;
-    return `<div class="${faviconClass}" style="background-image: url('${url}');"></div>`;
-}
 function renderPost(Post) {
-    let favicon = makeFavicon(Post.Url);
     return $(`
      <div class="PostRow" id='${Post.Id}'>
         <div class="PostContainer noselect">
             <div class="PostLayout">
                 <div class="Post">
-                    <a href="${Post.Url}" target="_blank"> ${favicon} </a>
                     <span class="PostTitle">${Post.Title}</span>
                 </div>
                 <span class="PostCategory">${Post.Category}</span>

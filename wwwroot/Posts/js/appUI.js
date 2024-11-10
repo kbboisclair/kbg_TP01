@@ -228,7 +228,7 @@ async function renderDeletePostForm(id) {
                     renderError("Une erreur est survenue!");
                 }
             });
-            $('#cancel').on("click", function () { // ici
+            $('#cancel').on("click", function () { 
                 showPosts();
             });
 
@@ -252,7 +252,7 @@ function newPost() {
     Post.Title = "";
     Post.Text = "";
     Post.Category = "";
-    Post.Image = "";        // asset image à compléter
+    Post.Image = "";        
     Post.Creation = 0;
     return Post;
 }
@@ -331,44 +331,16 @@ function renderPostForm(Post = null) {
         showPosts();
     });
 }
-// function renderPost(Post) {
-//     return $(`
-//      <div class="PostRow" id='${Post.Id}'>
-//         <div class="PostContainer noselect">
-//             <div class="PostLayout">
-//                 <span class="PostCategory">${Post.Category}</span>
-//                 <div class="Post">
-//                     <span class="PostTitle">${Post.Title}</span>
-//                 </div>
-//                 <div>
-//                     <img src="${Post.Image}" alt="Image de la publication" />
-//                     <p>${Post.Creation}</p>
-//                 <\div>
-//                 <div>
-//                     <span class="PostTitle">${Post.Text}</span>
-//                 </div>
-//             </div>
-//             <div class="PostCommandPanel">
-//                 <span class="editCmd cmdIcon fa fa-pencil" editPostId="${Post.Id}" title="Modifier ${Post.Title}"></span>
-//                 <span class="deleteCmd cmdIcon fa fa-trash" deletePostId="${Post.Id}" title="Effacer ${Post.Title}"></span>
-//             </div>
-//         </div>
-//     </div>           
-//     `);
-// }
-
 function renderPost(Post) {
     return $(`
         <div class="PostRow" id='${Post.Id}'>
             <div class="PostContainer noselect">
                 <div class="PostLayout">
-                    
                     <div class="PostCommandPanel">
                         <span class="PostCategory">${Post.Category}</span>
                         <span class="editCmd cmdIcon fa fa-pencil" editPostId="${Post.Id}" title="Modifier ${Post.Title}"></span>
                         <span class="deleteCmd cmdIcon fa fa-trash" deletePostId="${Post.Id}" title="Effacer ${Post.Title}"></span>
-                    </div>
-
+                    </divv
                     <div class="PostImageContainer">
                         <img src="${Post.Image}" alt="Image de la publication" class="PostImage" />
                     </div>
@@ -377,7 +349,6 @@ function renderPost(Post) {
                     <div class="Post">
                         <span class="PostTitle">${Post.Title}</span>
                     </div>
-
                     <div class="PostText">
                         <p>${Post.Text}</p>
                     </div>

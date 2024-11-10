@@ -252,7 +252,7 @@ function newPost() {
     Post.Title = "";
     Post.Text = "";
     Post.Category = "";
-    Post.Image = "";        
+    Post.Image = "";       
     Post.Creation = 0;
     return Post;
 }
@@ -340,7 +340,7 @@ function renderPost(Post) {
                         <span class="PostCategory">${Post.Category}</span>
                         <span class="editCmd cmdIcon fa fa-pencil" editPostId="${Post.Id}" title="Modifier ${Post.Title}"></span>
                         <span class="deleteCmd cmdIcon fa fa-trash" deletePostId="${Post.Id}" title="Effacer ${Post.Title}"></span>
-                    </divv
+                    </div>
                     <div class="PostImageContainer">
                         <img src="${Post.Image}" alt="Image de la publication" class="PostImage" />
                     </div>

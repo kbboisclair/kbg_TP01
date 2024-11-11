@@ -42,7 +42,7 @@ async function Init_UI() {
 }
 
 function showPosts() {  
-    $("#actionTitle").text("Liste des favoris");
+    $("#actionTitle").text("Baananan favoris");
     $("#scrollPanel").show();
     $('#abort').hide();
     $('#postForm').hide();
@@ -131,6 +131,7 @@ async function compileCategories() {
 async function renderPosts(queryString) {
     let endOfData = false;
     queryString += "&sort=category";
+    console.log("babanannae");
     if (selectedCategory != "") queryString += "&category=" + selectedCategory;
     addWaitingGif();
     let response = await Posts_API.Get(queryString);

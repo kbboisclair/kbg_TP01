@@ -42,7 +42,7 @@ async function Init_UI() {
 }
 
 function showPosts() {  
-    $("#actionTitle").text("Baananan favoris");
+    $("#actionTitle").text("Liste des publications");
     $("#scrollPanel").show();
     $('#abort').hide();
     $('#postForm').hide();
@@ -116,7 +116,7 @@ function updateDropDownMenu() {
 }
 async function compileCategories() {
     categories = [];
-    let response = await Posts_API.GetQuery("?fields=category&sort=category");
+    let response = await Posts_API.GetQuery("?fields=category&sort=category");  
     if (!Posts_API.error) {
         let items = response.data;
         if (items != null) {
@@ -135,20 +135,21 @@ async function renderPosts(queryString) {
     if (selectedCategory != "") queryString += "&category=" + selectedCategory;
     addWaitingGif();
     let response = await Posts_API.Get(queryString);
+    console.log("Response from API:", response);
     if (!Posts_API.error) {
         currentETag = response.ETag;
         let Posts = response.data;
         if (Posts.length > 0) {
             Posts.forEach(Post => {
-                $("#itemsPanel").append(renderBookmark(Post));
+                $("#itemsPanel").append(renderPost(Post));
             });
             $(".editCmd").off();
             $(".editCmd").on("click", function () {
-                renderEditBookmarkForm($(this).attr("editBookmarkId"));
+                renderEditPostForm($(this).attr("editPostId"));
             });
             $(".deleteCmd").off();
             $(".deleteCmd").on("click", function () {
-                renderDeleteBookmarkForm($(this).attr("deleteBookmarkId"));
+                renderDeletePostForm($(this).attr("deletePostId"));
             });
         } else
             endOfData = true;
@@ -196,7 +197,7 @@ async function renderDeletePostForm(id) {
         <div class="PostdeleteForm">
             <h4>Effacer le favori suivant?</h4>
             <br>
-            <div class="PostRow" id=${Bookmark.Id}">
+            <div class="PostRow" id=${Post.Id}">
                 <div class="PostContainer noselect">
                     <div class="PostLayout">
                         <div class="Post">
@@ -228,7 +229,7 @@ async function renderDeletePostForm(id) {
                     renderError("Une erreur est survenue!");
                 }
             });
-            $('#cancel').on("click", function () { // ici
+            $('#cancel').on("click", function () { 
                 showPosts();
             });
 
@@ -252,7 +253,7 @@ function newPost() {
     Post.Title = "";
     Post.Text = "";
     Post.Category = "";
-    Post.Image = "";        // asset image à compléter
+    Post.Image = "";       
     Post.Creation = 0;
     return Post;
 }
@@ -267,46 +268,46 @@ function renderPostForm(Post = null) {
     $("#actionTitle").text(create ? "Création" : "Modification");
     $("#PostForm").show();
     $("#PostForm").empty();
-    // $("#PostForm").append(`
-    //     <form class="form" id="PostForm">
-    //         <a href="${Post.Url}" target="_blank" id="faviconLink" class="big-favicon" > ${favicon} </a>
-    //         <br>
-    //         <input type="hidden" name="Id" value="${Post.Id}"/>
+    $("#PostForm").append(`
+        <form class="form" id="PostForm">
+            <a href="${Post.Url}" target="_blank" id="faviconLink" class="big-favicon" > ${favicon} </a>
+            <br>
+            <input type="hidden" name="Id" value="${Post.Id}"/>
 
-    //         <label for="Title" class="form-label">Titre </label>
-    //         <input 
-    //             class="form-control Alpha"
-    //             name="Title" 
-    //             id="Title" 
-    //             placeholder="Titre"
-    //             required
-    //             RequireMessage="Veuillez entrer un titre"
-    //             InvalidMessage="Le titre comporte un caractère illégal"
-    //             value="${Post.Title}"
-    //         />
-    //         <label for="Url" class="form-label">Url </label>
-    //         <input
-    //             class="form-control URL"
-    //             name="Url"
-    //             id="Url"
-    //             placeholder="Url"
-    //             required
-    //             value="${Post.Url}" 
-    //         />
-    //         <label for="Category" class="form-label">Catégorie </label>
-    //         <input 
-    //             class="form-control"
-    //             name="Category"
-    //             id="Category"
-    //             placeholder="Catégorie"
-    //             required
-    //             value="${Post.Category}"
-    //         />
-    //         <br>
-    //         <input type="submit" value="Enregistrer" id="saveBookmark" class="btn btn-primary">
-    //         <input type="button" value="Annuler" id="cancel" class="btn btn-secondary">
-    //     </form>
-    // `);
+            <label for="Title" class="form-label">Titre </label>
+            <input 
+                class="form-control Alpha"
+                name="Title" 
+                id="Title" 
+                placeholder="Titre"
+                required
+                RequireMessage="Veuillez entrer un titre"
+                InvalidMessage="Le titre comporte un caractère illégal"
+                value="${Post.Title}"
+            />
+            <label for="Url" class="form-label">Url </label>
+            <input
+                class="form-control URL"
+                name="Url"
+                id="Url"
+                placeholder="Url"
+                required
+                value="${Post.Url}" 
+            />
+            <label for="Category" class="form-label">Catégorie </label>
+            <input 
+                class="form-control"
+                name="Category"
+                id="Category"
+                placeholder="Catégorie"
+                required
+                value="${Post.Category}"
+            />
+            <br>
+            <input type="submit" value="Enregistrer" id="saveBookmark" class="btn btn-primary">
+            <input type="button" value="Annuler" id="cancel" class="btn btn-secondary">
+        </form>
+    `);
     initFormValidation();
     $("#Url").on("change", function () {
         let favicon = makeFavicon($("#Url").val(), true);
@@ -331,33 +332,30 @@ function renderPostForm(Post = null) {
         showPosts();
     });
 }
-function makeFavicon(url, big = false) {
-    // Utiliser l'API de google pour extraire le favicon du site pointé par url
-    // retourne un élément div comportant le favicon en tant qu'image de fond
-    ///////////////////////////////////////////////////////////////////////////
-    if (url.slice(-1) != "/") url += "/";
-    let faviconClass = "favicon";
-    if (big) faviconClass = "big-favicon";
-    url = "http://www.google.com/s2/favicons?sz=64&domain=" + url;
-    return `<div class="${faviconClass}" style="background-image: url('${url}');"></div>`;
-}
 function renderPost(Post) {
-    let favicon = makeFavicon(Post.Url);
     return $(`
-     <div class="PostRow" id='${Post.Id}'>
-        <div class="PostContainer noselect">
-            <div class="PostLayout">
-                <div class="Post">
-                    <a href="${Post.Url}" target="_blank"> ${favicon} </a>
-                    <span class="PostTitle">${Post.Title}</span>
+        <div class="PostRow" id='${Post.Id}'>
+            <div class="PostContainer noselect">
+                <div class="PostLayout">
+                    <div class="PostCommandPanel">
+                        <span class="PostCategory">${Post.Category}</span>
+                        <span class="editCmd cmdIcon fa fa-pencil" editPostId="${Post.Id}" title="Modifier ${Post.Title}"></span>
+                        <span class="deleteCmd cmdIcon fa fa-trash" deletePostId="${Post.Id}" title="Effacer ${Post.Title}"></span>
+                    </div>
+                    <div class="PostImageContainer">
+                        <img src="${Post.Image}" alt="Image de la publication" class="PostImage" />
+                    </div>
+                    <p class="PostDate">${Post.Creation}</p>
+                    
+                    <div class="Post">
+                        <span class="PostTitle">${Post.Title}</span>
+                    </div>
+                    <div class="PostText">
+                        <p>${Post.Text}</p>
+                    </div>
                 </div>
-                <span class="PostCategory">${Post.Category}</span>
-            </div>
-            <div class="PostCommandPanel">
-                <span class="editCmd cmdIcon fa fa-pencil" editPostId="${Post.Id}" title="Modifier ${Post.Title}"></span>
-                <span class="deleteCmd cmdIcon fa fa-trash" deletePostId="${Post.Id}" title="Effacer ${Post.Title}"></span>
+                
             </div>
         </div>
-    </div>           
     `);
 }

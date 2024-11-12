@@ -31,6 +31,9 @@ async function Init_UI() {
     $('#createPost').on("click", async function () {
         renderCreatePostForm();
     });
+    $("#searchPost").on("click", async function () {
+      flipSearch();
+    });
     $('#abort').on("click", async function () {
         showPosts()
     });
@@ -38,9 +41,18 @@ async function Init_UI() {
         renderAbout();
     });
     showPosts();
+    flipSearch();
     start_Periodic_Refresh();
 }
 
+function flipSearch() {
+    if ($("#search").is(":visible")) {
+        $("#search").hide();
+    }
+    else {
+        $("#search").show();
+    }
+}
 function showPosts() {  
     $("#actionTitle").text("Liste des publications");
     $("#scrollPanel").show();
@@ -51,6 +63,7 @@ function showPosts() {
     hold_Periodic_Refresh = false;
 }
 function hidePosts() {
+    $("#searchPost").hide();
     $("#scrollPanel").hide();
     $("#createPost").hide();
     $("#abort").show();
@@ -131,7 +144,6 @@ async function compileCategories() {
 async function renderPosts(queryString) {
     let endOfData = false;
     queryString += "&sort=category";
-    console.log("babanannae");
     if (selectedCategory != "") queryString += "&category=" + selectedCategory;
     addWaitingGif();
     let response = await Posts_API.Get(queryString);

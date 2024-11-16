@@ -147,7 +147,6 @@ async function renderPosts(queryString) {
     if (selectedCategory != "") queryString += "&category=" + selectedCategory;
     addWaitingGif();
     let response = await Posts_API.Get(queryString);
-    console.log("Response from API:", response);
     if (!Posts_API.error) {
         currentETag = response.ETag;
         let Posts = response.data;
@@ -203,9 +202,8 @@ async function renderDeletePostForm(id) {
     let response = await Posts_API.Get(id)
     if (!Posts_API.error) {
         let Post = response.data;
-        let favicon = makeFavicon(Post.Url);
         if (Post !== null) {
-            $("#PostForm").append(`
+            $("#postForm").append(`
         <div class="PostdeleteForm">
             <h4>Effacer le favori suivant?</h4>
             <br>
@@ -213,12 +211,12 @@ async function renderDeletePostForm(id) {
                 <div class="PostContainer noselect">
                     <div class="PostLayout">
                         <div class="Post">
-                            <a href="${Post.Url}" target="_blank"> ${favicon} </a>
                             <span class="PostTitle">${Post.Title}</span>
                         </div>
                         <span class="PostCategory">${Post.Category}</span>
                     </div>
                     <div class="PostCommandPanel">
+                        <span></span>
                         <span class="editCmd cmdIcon fa fa-pencil" editPostId="${Post.Id}" title="Modifier ${Post.Title}"></span>
                         <span class="deleteCmd cmdIcon fa fa-trash" deletePostId="${Post.Id}" title="Effacer ${Post.Title}"></span>
                     </div>
@@ -272,20 +270,15 @@ function newPost() {
 function renderPostForm(Post = null) {
     hidePosts();
     let create = Post == null;
-    let favicon = `<div class="big-favicon"></div>`;
     if (create)
         Post = newPost();
     else
-        favicon = makeFavicon(Post.Url, true);
     $("#actionTitle").text(create ? "Création" : "Modification");
-    $("#PostForm").show();
-    $("#PostForm").empty();
-    $("#PostForm").append(`
-        <form class="form" id="PostForm">
-            <a href="${Post.Url}" target="_blank" id="faviconLink" class="big-favicon" > ${favicon} </a>
-            <br>
+    $("#postForm").show();
+    $("#postForm").empty();
+    $("#postForm").append(`
+        <form class="form" id="postForm">
             <input type="hidden" name="Id" value="${Post.Id}"/>
-
             <label for="Title" class="form-label">Titre </label>
             <input 
                 class="form-control Alpha"
@@ -297,14 +290,14 @@ function renderPostForm(Post = null) {
                 InvalidMessage="Le titre comporte un caractère illégal"
                 value="${Post.Title}"
             />
-            <label for="Url" class="form-label">Url </label>
+            <label for="Text" class="form-label">Text </label>
             <input
-                class="form-control URL"
-                name="Url"
-                id="Url"
-                placeholder="Url"
+                class="form-control Text"
+                name="Text"
+                id="Text"
+                placeholder="Text"
                 required
-                value="${Post.Url}" 
+                value="${Post.Text}" 
             />
             <label for="Category" class="form-label">Catégorie </label>
             <input 
@@ -316,18 +309,22 @@ function renderPostForm(Post = null) {
                 value="${Post.Category}"
             />
             <br>
-            <input type="submit" value="Enregistrer" id="saveBookmark" class="btn btn-primary">
+            <label for="Image" class="form-label">Image </label>
+            <input 
+                class="form-control"
+                name="Image"
+                id="Image"
+                placeholder="Image"
+                required
+                value="${Post.Image}"
+            />
+            <br>
+            <input type="submit" value="Enregistrer" id="savePost" class="btn btn-primary">
             <input type="button" value="Annuler" id="cancel" class="btn btn-secondary">
         </form>
     `);
     initFormValidation();
-    $("#Url").on("change", function () {
-        let favicon = makeFavicon($("#Url").val(), true);
-        $("#faviconLink").empty();
-        $("#faviconLink").attr("href", $("#Url").val());
-        $("#faviconLink").append(favicon);
-    })
-    $('#Post').on("submit", async function (event) {
+    $('#PostForm').on("submit", async function (event) {
         event.preventDefault();
         let Post = getFormData($("#PostForm"));
         Post = await Posts_API.Save(Post, create);
@@ -354,19 +351,17 @@ function renderPost(Post) {
                         <span class="editCmd cmdIcon fa fa-pencil" editPostId="${Post.Id}" title="Modifier ${Post.Title}"></span>
                         <span class="deleteCmd cmdIcon fa fa-trash" deletePostId="${Post.Id}" title="Effacer ${Post.Title}"></span>
                     </div>
+                    <div class="Post">
+                        <span class="PostTitle">${Post.Title}</span>
+                    </div>
                     <div class="PostImageContainer">
                         <img src="${Post.Image}" alt="Image de la publication" class="PostImage" />
                     </div>
                     <p class="PostDate">${Post.Creation}</p>
-                    
-                    <div class="Post">
-                        <span class="PostTitle">${Post.Title}</span>
-                    </div>
                     <div class="PostText">
                         <p>${Post.Text}</p>
                     </div>
                 </div>
-                
             </div>
         </div>
     `);

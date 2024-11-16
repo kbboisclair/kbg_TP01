@@ -63,20 +63,20 @@
 }
 
 .PostCommandPanel {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
+    display: grid;
+    grid-template-columns: 17fr 1fr 1fr;
+    align-items: center;
     gap: 8px;
     padding: 8px;
 }
 
 .PostContainer .cmdIcon {
-    display: none;
+    opacity: 0;
     cursor: pointer;
 }
 
 .PostContainer:hover .cmdIcon {
-    display: block;
+    opacity: 1;
 }
 
 .PostdeleteForm {

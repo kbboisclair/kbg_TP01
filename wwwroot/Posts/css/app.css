@@ -179,7 +179,7 @@ a {
     color: darkgreen !important;
 }
 
-.favicon {
+/* .favicon {
     text-align: center;
     background-image: url("../post_logo.png");
     background-size: contain;
@@ -187,9 +187,9 @@ a {
     height: 24px;
     width: 24px;
     margin-right: 5px;
-}
+} */
 
-.big-favicon {
+/* .big-favicon {
     text-align: center;
     background-image: url("../post_logo.png");
     background-size: contain;
@@ -197,7 +197,7 @@ a {
     height: 48px;
     width: 48px;
     margin-right: 5px;
-}
+} */
 
 label {
     font-weight: bold;

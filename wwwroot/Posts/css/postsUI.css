@@ -50,16 +50,50 @@
     object-fit: cover; 
     border-radius: 4px;
 }
+.PostDate{
+    font-size: 0.9rem;
+    color: #777;
+}
+.PostTitle {
+    font-size: 1.6rem;
+    color: #333;
+    font-weight: bold;
+}
 
 .PostDetails {
     font-size: 0.9rem;
     color: #777;
     margin-top: 4px;
 }
+.deleteConfirmContainer{
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 
 .PostText {
-    font-size: 1rem;
-    color: #555;
+    display: inline-block;
+    overflow: hidden;
+    max-height: 140px;
+    transition: max-height 0.3s ease-in-out;
+}
+.PostText.expanded {
+    max-height: none;
+    white-space: normal;
+}
+.read-more-btn {
+    color: #007BFF;
+    cursor: pointer;
+    font-weight: bold;
+    display: inline-block;
+    border: none;
+    background-color: transparent;
 }
 
 .PostCommandPanel {

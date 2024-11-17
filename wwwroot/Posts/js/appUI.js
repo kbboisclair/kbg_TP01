@@ -2,6 +2,7 @@ const periodicRefreshPeriod = 10;
 let categories = [];
 let selectedCategory = "";
 let currentETag = "";
+let searchBarInput = "";
 let hold_Periodic_Refresh = false;
 let pageManager;
 let itemLayout;
@@ -39,6 +40,12 @@ async function Init_UI() {
     });
     $('#aboutCmd').on("click", function () {
         renderAbout();
+    });
+    $("#searchInput").on("keydown", async function (event) {
+      if (event.key === "Enter") {
+        searchBarInput = $("#searchInput").val();
+        pageManager.reset();
+      }
     });
     showPosts();
     flipSearch();
@@ -142,33 +149,33 @@ async function compileCategories() {
     }
 }
 async function renderPosts(queryString) {
-    let endOfData = false;
-    queryString += "&sort=category";
-    if (selectedCategory != "") queryString += "&category=" + selectedCategory;
-    addWaitingGif();
-    let response = await Posts_API.Get(queryString);
-    if (!Posts_API.error) {
-        currentETag = response.ETag;
-        let Posts = response.data;
-        if (Posts.length > 0) {
-            Posts.forEach(Post => {
-                $("#itemsPanel").append(renderPost(Post));
-            });
-            $(".editCmd").off();
-            $(".editCmd").on("click", function () {
-                renderEditPostForm($(this).attr("editPostId"));
-            });
-            $(".deleteCmd").off();
-            $(".deleteCmd").on("click", function () {
-                renderDeletePostForm($(this).attr("deletePostId"));
-            });
-        } else
-            endOfData = true;
-    } else {
-        renderError(Posts_API.currentHttpError);
-    }
-    removeWaitingGif();
-    return endOfData;
+  let endOfData = false;
+  queryString += "&sort=category";
+  if (searchBarInput != "") queryString += "&keywords=" + searchBarInput;
+  if (selectedCategory != "") queryString += "&category=" + selectedCategory;
+  addWaitingGif();
+  let response = await Posts_API.Get(queryString);
+  if (!Posts_API.error) {
+    currentETag = response.ETag;
+    let Posts = response.data;
+    if (Posts.length > 0) {
+      Posts.forEach((Post) => {
+        $("#itemsPanel").append(renderPost(Post));
+      });
+      $(".editCmd").off();
+      $(".editCmd").on("click", function () {
+        renderEditPostForm($(this).attr("editPostId"));
+      });
+      $(".deleteCmd").off();
+      $(".deleteCmd").on("click", function () {
+        renderDeletePostForm($(this).attr("deletePostId"));
+      });
+    } else endOfData = true;
+  } else {
+    renderError(Posts_API.currentHttpError);
+  }
+  removeWaitingGif();
+  return endOfData;
 }
 
 function renderError(message) {
@@ -277,7 +284,7 @@ function renderPostForm(Post = null) {
     $("#postForm").show();
     $("#postForm").empty();
     $("#postForm").append(`
-        <form class="form" id="postForm">
+        <form class="form" id="PostForm">
             <input type="hidden" name="Id" value="${Post.Id}"/>
             <label for="Title" class="form-label">Titre </label>
             <input 
@@ -291,14 +298,13 @@ function renderPostForm(Post = null) {
                 value="${Post.Title}"
             />
             <label for="Text" class="form-label">Text </label>
-            <input
-                class="form-control Text"
-                name="Text"
-                id="Text"
-                placeholder="Text"
-                required
-                value="${Post.Text}" 
-            />
+            <textarea
+            class="form-control Text"
+            name="Text"
+            id="Text"
+            placeholder="Text"
+            required
+            >${Post.Text}</textarea>
             <label for="Category" class="form-label">Catégorie </label>
             <input 
                 class="form-control"
@@ -318,6 +324,12 @@ function renderPostForm(Post = null) {
                 required
                 value="${Post.Image}"
             />
+            <input
+            type="hidden"
+            id="creationTime"
+            name="Creation"
+            value="${Date.now()}"
+            />
             <br>
             <input type="submit" value="Enregistrer" id="savePost" class="btn btn-primary">
             <input type="button" value="Annuler" id="cancel" class="btn btn-secondary">
@@ -326,6 +338,7 @@ function renderPostForm(Post = null) {
     initFormValidation();
     $('#PostForm').on("submit", async function (event) {
         event.preventDefault();
+        
         let Post = getFormData($("#PostForm"));
         Post = await Posts_API.Save(Post, create);
         if (!Posts_API.error) {
@@ -333,6 +346,7 @@ function renderPostForm(Post = null) {
             await pageManager.update(false);
             compileCategories();
             pageManager.scrollToElem(Post.Id);
+            console.log("Post enregistré");
         }
         else
             renderError("Une erreur est survenue!");

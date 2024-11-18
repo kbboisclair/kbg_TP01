@@ -177,7 +177,7 @@
     async function webAPI_GET(queryString) {
         return new Promise(resolve => {
             $.ajax({
-                url: "http://localhost:500/api/words" + queryString,
+                url: "https://upbeat-alert-patch.glitch.me/api/words" + queryString,
                 type: 'GET',
                 contentType: 'text/plain',
                 data: {},

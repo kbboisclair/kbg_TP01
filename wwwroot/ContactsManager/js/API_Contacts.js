@@ -1,5 +1,5 @@
 //const API_URL = "https://api-server-5.glitch.me/api/contacts";
-const API_URL = "http://localhost:500/api/contacts";
+const API_URL = "https://upbeat-alert-patch.glitch.me/api/contacts";
 let currentHttpError = "";
 
 function API_getcurrentHttpError () {

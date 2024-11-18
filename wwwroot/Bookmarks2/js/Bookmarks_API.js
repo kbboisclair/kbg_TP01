@@ -1,6 +1,6 @@
 
 class Bookmarks_API {
-    static API_URL() { return "http://localhost:500/api/bookmarks" };
+    static API_URL() { return "https://upbeat-alert-patch.glitch.me/api/bookmarks" };
     static initHttpState() {
         this.currentHttpError = "";
         this.currentStatus = 0;
